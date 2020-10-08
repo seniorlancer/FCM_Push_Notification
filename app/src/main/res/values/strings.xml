@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FCM</string>
+    <string name="retrieve_token">Retrieve Token</string>
+</resources>

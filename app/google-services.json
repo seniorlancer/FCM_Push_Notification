@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "985816467980",
+    "firebase_url": "https://fcm-push-notification-8120f.firebaseio.com",
+    "project_id": "fcm-push-notification-8120f",
+    "storage_bucket": "fcm-push-notification-8120f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985816467980:android:3ff618639e59eeff7ebc29",
+        "android_client_info": {
+          "package_name": "com.seniorlancer.fcm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "985816467980-eojj7oc2p6ja5og558g0rbvlj8j46mhn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCivkJSD1cJnlDslb4b8Yh486Vg-OUwH0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "985816467980-eojj7oc2p6ja5og558g0rbvlj8j46mhn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
