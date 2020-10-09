@@ -1,12 +1,21 @@
 package com.seniorlancer.fcm;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +36,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "FCM_LOG";
     public static final int MY_BACKGROUND_JOB = 0;
+    public static final int RESULT_RESTRICTION_BACKGROUND = 100;
 
     Button btnRetrieveToken;
     EditText textView;
@@ -38,8 +48,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnRetrieveToken = findViewById(R.id.btn_retrieve_toke);
         textView = findViewById(R.id.txt_token);
 
+
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            String channelId  = getString(R.string.default_notification_channel_id);
+            String channelName = getString(R.string.default_notification_channel_name);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW));
+        }
+
         btnRetrieveToken.setOnClickListener(this);
+        checkBackgroundRestriction();
 //        scheduleJob(this);
+    }
+
+    private void checkBackgroundRestriction() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            boolean check = activityManager.isBackgroundRestricted();
+            if(!check) {
+                setRestrictionBackground();
+            }
+            Log.d("TEST", "onCreate: activityManager.isBackgroundRestricted() = " + check);
+        }
+    }
+
+    private void setRestrictionBackground() {
+        AlertDialog.Builder alertRestriction = new AlertDialog.Builder(this);
+        alertRestriction.setMessage(getResources().getString(R.string.set_background_restriction));
+        alertRestriction.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent=new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", getPackageName(), null));
+                startActivityForResult(intent, RESULT_RESTRICTION_BACKGROUND);
+            }
+        });
+        alertRestriction.setCancelable(false);
+        AlertDialog alertDialog = alertRestriction.create();
+        alertDialog.show();
     }
 
     public void runTimeEnableAuto() {
@@ -71,6 +119,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_RESTRICTION_BACKGROUND) {
+            checkBackgroundRestriction();
         }
     }
 
