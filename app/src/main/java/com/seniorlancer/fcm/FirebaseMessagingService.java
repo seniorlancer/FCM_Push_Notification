@@ -19,6 +19,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         handleMessage(remoteMessage);
     }
 
+
+
     private void handleMessage(RemoteMessage remoteMessage) {
         String from = remoteMessage.getFrom();
         Log.i(TAG, "Message from: " + from);
