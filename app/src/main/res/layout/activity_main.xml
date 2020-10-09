@@ -14,4 +14,8 @@
        android:layout_height="wrap_content"
        android:text="@string/retrieve_token"/>
 
+   <EditText
+       android:id="@+id/txt_token"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
 </LinearLayout>
