@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">FCM</string>
-    <string name="retrieve_token">Retrieve Token</string>
+    <string name="retrieve_token">generate Token</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="default_notification_channel_name" translatable="true">FCM</string>
     <string name="ok">Ok</string>
     <string name="set_background_restriction">You have to restrict the background restriction.\nPlease set it on Battery option.</string>
+    <string name="message">Received message</string>
+
 </resources>

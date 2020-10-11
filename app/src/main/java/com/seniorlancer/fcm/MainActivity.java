@@ -34,12 +34,15 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    static MainActivity runingActivity = null;
+
     private final String TAG = "FCM_LOG";
     public static final int MY_BACKGROUND_JOB = 0;
     public static final int RESULT_RESTRICTION_BACKGROUND = 100;
 
     Button btnRetrieveToken;
     EditText textView;
+    EditText textMessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,8 +50,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnRetrieveToken = findViewById(R.id.btn_retrieve_toke);
         textView = findViewById(R.id.txt_token);
+        textMessage = findViewById(R.id.txt_message);
 
+        textMessage.setText("");
 
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                if(getIntent().getExtras().get("message") != null) {
+                    String value = getIntent().getExtras().get("message").toString();
+                    Log.d(TAG, "Key: " + key + " Value: " + value);
+                    textMessage.setText(value);
+                } else {
+                    textMessage.setText("");
+                }
+            }
+        }
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String channelId  = getString(R.string.default_notification_channel_id);
@@ -60,7 +76,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnRetrieveToken.setOnClickListener(this);
         checkBackgroundRestriction();
+        runtimeEnableAutoInit();
+
 //        scheduleJob(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        runingActivity = this;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        runingActivity = null;
+    }
+
+    public void runtimeEnableAutoInit() {
+        // [START fcm_runtime_enable_auto_init]
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        // [END fcm_runtime_enable_auto_init]
     }
 
     private void checkBackgroundRestriction() {
@@ -114,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(checkGooglePlayServices()) {
                     retrieveFirebaseToken();
                 } else {
+                    Toast.makeText(getApplicationContext(), "Device doesn't have google play services", Toast.LENGTH_LONG).show();
                     Log.w(TAG, "Device doesn't have google play services");
                 }
                 break;
@@ -141,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 String token = task.getResult().getToken();
                 textView.setText(token);
-                Toast.makeText(getApplicationContext(), token, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -156,5 +192,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i(TAG, "Google play services updated");
             return true;
         }
+    }
+
+    public void setMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textMessage.setText(message);
+            }
+        });
     }
 }
