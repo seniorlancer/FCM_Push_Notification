@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 .idea/
+key.jks
+app/release/
